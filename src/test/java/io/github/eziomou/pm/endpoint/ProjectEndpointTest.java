@@ -1,15 +1,39 @@
 package io.github.eziomou.pm.endpoint;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
+import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.matchesRegex;
 
 @QuarkusTest
 public class ProjectEndpointTest {
+
+    @Test
+    public void createProject() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(new JsonObject().put("name", "Project name").toString())
+                .when().post("/projects")
+                .then()
+                .statusCode(201)
+                .header("Location", matchesRegex("^.*?/projects/\\d+$"));
+    }
+
+    @Test
+    public void createProject_blankName() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(new JsonObject().put("name", " ").toString())
+                .when().post("/projects")
+                .then()
+                .statusCode(400);
+    }
 
     @Test
     public void getProjects() {

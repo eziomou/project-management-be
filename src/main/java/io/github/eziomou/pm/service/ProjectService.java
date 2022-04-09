@@ -2,9 +2,13 @@ package io.github.eziomou.pm.service;
 
 import io.github.eziomou.pm.resource.PageResource;
 import io.github.eziomou.pm.resource.ProjectResource;
+import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;
 import io.smallrye.mutiny.Uni;
 
 public interface ProjectService {
+
+    @ReactiveTransactional
+    Uni<ProjectResource> createProject(String name);
 
     Uni<PageResource<ProjectResource>> getProjects(int pageIndex, int pageSize);
 

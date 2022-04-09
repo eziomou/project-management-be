@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class ProjectEntity extends BaseEntity<Long> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "ID")
     private Long id;
 

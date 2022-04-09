@@ -24,6 +24,18 @@ public class ProjectServiceImpl implements ProjectService {
 
     @ReactiveTransactional
     @Override
+    public Uni<ProjectResource> createProject(String name) {
+        return Uni.createFrom().item(() -> {
+                    ProjectEntity project = new ProjectEntity();
+                    project.setName(name);
+                    return project;
+                })
+                .onItem().transformToUni(project -> projectRepository.persist(project))
+                .onItem().transform(projectMapper::map);
+    }
+
+    @ReactiveTransactional
+    @Override
     public Uni<PageResource<ProjectResource>> getProjects(int pageIndex, int pageSize) {
         return Uni.combine()
                 .all()

@@ -8,14 +8,24 @@ import org.jboss.resteasy.reactive.RestResponse;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 
 @Path("/projects")
 public class ProjectEndpoint {
 
     @Inject
     ProjectService projectService;
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Uni<?> createProject(@NotNull @Valid CreateProjectRequest request, @Context UriInfo uriInfo) {
+        return projectService.createProject(request.getName())
+                .map(project -> RestResponse.created(uriInfo.getAbsolutePathBuilder().path(project.getId().toString()).build()));
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
