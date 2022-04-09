@@ -7,10 +7,11 @@ import io.smallrye.mutiny.Uni;
 
 public interface ProjectService {
 
-    @ReactiveTransactional
     Uni<ProjectResource> createProject(String name);
 
     Uni<PageResource<ProjectResource>> getProjects(int pageIndex, int pageSize);
 
     Uni<ProjectResource> getProject(Long projectId);
+
+    Uni<ProjectResource> updateProject(Long projectId, String name);
 }

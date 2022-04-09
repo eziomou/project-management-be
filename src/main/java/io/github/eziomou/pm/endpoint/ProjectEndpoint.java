@@ -39,4 +39,11 @@ public class ProjectEndpoint {
     public Uni<RestResponse<ProjectResource>> getProject(@PathParam("projectId") Long projectId) {
         return projectService.getProject(projectId).map(RestResponse::ok);
     }
+
+    @PATCH
+    @Path("/{projectId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Uni<?> updateProject(@PathParam("projectId") Long projectId, @NotNull @Valid UpdateProjectRequest request) {
+        return projectService.updateProject(projectId, request.getName());
+    }
 }

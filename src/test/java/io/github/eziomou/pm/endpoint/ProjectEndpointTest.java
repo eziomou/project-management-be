@@ -71,4 +71,26 @@ public class ProjectEndpointTest {
                 .then()
                 .statusCode(404);
     }
+
+    @Test
+    public void updateProject() {
+        given()
+                .pathParam("projectId", 40)
+                .contentType(ContentType.JSON)
+                .body(new JsonObject().put("name", "Updated project name").toString())
+                .when().patch("/projects/{projectId}")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void updateProject_notExisting() {
+        given()
+                .pathParam("projectId", 100)
+                .contentType(ContentType.JSON)
+                .body(new JsonObject().put("name", "Updated project name").toString())
+                .when().patch("/projects/{projectId}")
+                .then()
+                .statusCode(404);
+    }
 }

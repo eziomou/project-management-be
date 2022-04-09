@@ -54,4 +54,18 @@ public class ProjectServiceImpl implements ProjectService {
                 .onItem().ifNull().failWith(NotFoundException::new)
                 .onItem().transform(projectMapper::map);
     }
+
+    @ReactiveTransactional
+    @Override
+    public Uni<ProjectResource> updateProject(Long projectId, String name) {
+        return projectRepository.findById(projectId)
+                .onItem().ifNull().failWith(NotFoundException::new)
+                .onItem().call(project -> {
+                    if (name != null) {
+                        project.setName(name);
+                    }
+                    return projectRepository.persist(project);
+                })
+                .onItem().transform(projectMapper::map);
+    }
 }
