@@ -68,4 +68,16 @@ public class ProjectServiceImpl implements ProjectService {
                 })
                 .onItem().transform(projectMapper::map);
     }
+
+    @ReactiveTransactional
+    @Override
+    public Uni<Void> deleteProject(Long projectId) {
+        return projectRepository.deleteById(projectId)
+                .invoke(deleted -> {
+                    if (!deleted) {
+                        throw new NotFoundException();
+                    }
+                })
+                .replaceWithVoid();
+    }
 }

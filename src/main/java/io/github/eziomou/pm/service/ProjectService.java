@@ -14,4 +14,6 @@ public interface ProjectService {
     Uni<ProjectResource> getProject(Long projectId);
 
     Uni<ProjectResource> updateProject(Long projectId, String name);
+
+    Uni<Void> deleteProject(Long projectId);
 }

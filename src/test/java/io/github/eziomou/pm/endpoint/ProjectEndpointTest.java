@@ -3,6 +3,7 @@ package io.github.eziomou.pm.endpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.vertx.core.json.JsonObject;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -10,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.matchesRegex;
+import static org.hamcrest.Matchers.notNullValue;
 
 @QuarkusTest
 public class ProjectEndpointTest {
@@ -48,7 +50,7 @@ public class ProjectEndpointTest {
                 .body("data[1].name", is("Project 2"))
                 .body("data[2].id", is(3))
                 .body("data[2].name", is("Project 3"))
-                .body("_metadata.totalCount", is(40));
+                .body("_metadata.totalCount", notNullValue());
     }
 
     @Test
@@ -75,7 +77,7 @@ public class ProjectEndpointTest {
     @Test
     public void updateProject() {
         given()
-                .pathParam("projectId", 40)
+                .pathParam("projectId", 20)
                 .contentType(ContentType.JSON)
                 .body(new JsonObject().put("name", "Updated project name").toString())
                 .when().patch("/projects/{projectId}")
@@ -90,6 +92,24 @@ public class ProjectEndpointTest {
                 .contentType(ContentType.JSON)
                 .body(new JsonObject().put("name", "Updated project name").toString())
                 .when().patch("/projects/{projectId}")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void deleteProject() {
+        given()
+                .pathParam("projectId", 40)
+                .when().delete("/projects/{projectId}")
+                .then()
+                .statusCode(204);
+    }
+
+    @Test
+    public void deleteProject_notExisting() {
+        given()
+                .pathParam("projectId", 100)
+                .when().delete("/projects/{projectId}")
                 .then()
                 .statusCode(404);
     }

@@ -46,4 +46,11 @@ public class ProjectEndpoint {
     public Uni<?> updateProject(@PathParam("projectId") Long projectId, @NotNull @Valid UpdateProjectRequest request) {
         return projectService.updateProject(projectId, request.getName());
     }
+
+    @DELETE
+    @Path("/{projectId}")
+    public Uni<?> deleteProject(@PathParam("projectId") Long projectId) {
+        return projectService.deleteProject(projectId)
+                .replaceWith(RestResponse::noContent);
+    }
 }
