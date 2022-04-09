@@ -7,4 +7,6 @@ import io.smallrye.mutiny.Uni;
 public interface ProjectService {
 
     Uni<PageResource<ProjectResource>> getProjects(int pageIndex, int pageSize);
+
+    Uni<ProjectResource> getProject(Long projectId);
 }

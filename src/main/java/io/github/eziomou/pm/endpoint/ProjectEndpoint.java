@@ -8,10 +8,7 @@ import org.jboss.resteasy.reactive.RestResponse;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/projects")
@@ -24,5 +21,12 @@ public class ProjectEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<RestResponse<PageResource<ProjectResource>>> getProjects(@Valid @BeanParam PageRequest pageRequest) {
         return projectService.getProjects(pageRequest.getPage(), pageRequest.getSize()).map(RestResponse::ok);
+    }
+
+    @GET
+    @Path("/{projectId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<RestResponse<ProjectResource>> getProject(@PathParam("projectId") Long projectId) {
+        return projectService.getProject(projectId).map(RestResponse::ok);
     }
 }

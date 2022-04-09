@@ -11,6 +11,7 @@ import io.smallrye.mutiny.Uni;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class ProjectServiceImpl implements ProjectService {
@@ -27,10 +28,18 @@ public class ProjectServiceImpl implements ProjectService {
         return Uni.combine()
                 .all()
                 .unis(projectRepository.findAll().page(Page.of(pageIndex, pageSize)).stream()
-                                .onItem().transform(project -> projectMapper.map(project))
+                                .onItem().transform(projectMapper::map)
                                 .collect().asList(),
                         projectRepository.findAll().count())
                 .asTuple()
                 .map(tuple -> new PageResource<>(tuple.getItem1(), new PageResource.Metadata(tuple.getItem2())));
+    }
+
+    @ReactiveTransactional
+    @Override
+    public Uni<ProjectResource> getProject(Long projectId) {
+        return projectRepository.findById(projectId)
+                .onItem().ifNull().failWith(NotFoundException::new)
+                .onItem().transform(projectMapper::map);
     }
 }

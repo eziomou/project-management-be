@@ -24,6 +24,27 @@ public class ProjectEndpointTest {
                 .body("data[1].name", is("Project 2"))
                 .body("data[2].id", is(3))
                 .body("data[2].name", is("Project 3"))
-                .body("_metadata.totalCount", is(3));
+                .body("_metadata.totalCount", is(40));
+    }
+
+    @Test
+    public void getProject() {
+        given()
+                .pathParam("projectId", 1)
+                .when().get("/projects/{projectId}")
+                .then()
+                .statusCode(200)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("id", is(1))
+                .body("name", is("Project 1"));
+    }
+
+    @Test
+    public void getProject_notExisting() {
+        given()
+                .pathParam("projectId", 100)
+                .when().get("/projects/{projectId}")
+                .then()
+                .statusCode(404);
     }
 }
