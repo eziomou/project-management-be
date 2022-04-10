@@ -15,6 +15,9 @@ public class ProjectEntity extends BaseEntity<Long> {
     @Column(name = "NAME", nullable = false)
     private String name;
 
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     @Column(name = "CREATED_AT", nullable = false)
     private LocalDateTime createdAt;
 
@@ -33,6 +36,14 @@ public class ProjectEntity extends BaseEntity<Long> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -16,10 +16,13 @@ import static org.hamcrest.Matchers.notNullValue;
 public class ProjectEndpointTest {
 
     @Test
-    public void createProject() {
+    public void createProject_validProject() {
         given()
                 .contentType(ContentType.JSON)
-                .body(new JsonObject().put("name", "Project name").toString())
+                .body(new JsonObject()
+                        .put("name", "Project name")
+                        .put("description", "Project description")
+                        .toString())
                 .when().post("/projects")
                 .then()
                 .statusCode(201)
@@ -37,6 +40,19 @@ public class ProjectEndpointTest {
     }
 
     @Test
+    public void createProject_nullDescription() {
+        given()
+                .contentType(ContentType.JSON)
+                .body(new JsonObject()
+                        .put("name", "Project name")
+                        .put("description", null)
+                        .toString())
+                .when().post("/projects")
+                .then()
+                .statusCode(201);
+    }
+
+    @Test
     public void getProjects() {
         given()
                 .when().get("/projects")
@@ -45,10 +61,13 @@ public class ProjectEndpointTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body("data[0].id", is(1))
                 .body("data[0].name", is("Project 1"))
+                .body("data[0].description", is("Project description 1"))
                 .body("data[1].id", is(2))
                 .body("data[1].name", is("Project 2"))
+                .body("data[1].description", is("Project description 2"))
                 .body("data[2].id", is(3))
                 .body("data[2].name", is("Project 3"))
+                .body("data[2].description", is("Project description 3"))
                 .body("_metadata.totalCount", notNullValue());
     }
 
@@ -62,6 +81,7 @@ public class ProjectEndpointTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body("id", is(1))
                 .body("name", is("Project 1"))
+                .body("description", is("Project description 1"))
                 .body("createdAt", matchesRegex("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"));
     }
 
@@ -79,10 +99,22 @@ public class ProjectEndpointTest {
         given()
                 .pathParam("projectId", 20)
                 .contentType(ContentType.JSON)
-                .body(new JsonObject().put("name", "Updated project name").toString())
+                .body(new JsonObject()
+                        .put("name", "Updated project name")
+                        .put("description", "Updated project description")
+                        .toString())
                 .when().patch("/projects/{projectId}")
                 .then()
                 .statusCode(200);
+
+        given()
+                .pathParam("projectId", 20)
+                .when().get("/projects/{projectId}")
+                .then()
+                .statusCode(200)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("name", is("Updated project name"))
+                .body("description", is("Updated project description"));
     }
 
     @Test
@@ -103,6 +135,12 @@ public class ProjectEndpointTest {
                 .when().delete("/projects/{projectId}")
                 .then()
                 .statusCode(204);
+
+        given()
+                .pathParam("projectId", 40)
+                .when().get("/projects/{projectId}")
+                .then()
+                .statusCode(404);
     }
 
     @Test

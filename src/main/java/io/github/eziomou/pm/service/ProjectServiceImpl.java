@@ -29,6 +29,7 @@ public class ProjectServiceImpl implements ProjectService {
         return Uni.createFrom().item(() -> {
                     ProjectEntity project = new ProjectEntity();
                     project.setName(name);
+                    project.setDescription(name);
                     project.setCreatedAt(LocalDateTime.now());
                     return project;
                 })
@@ -59,14 +60,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     @ReactiveTransactional
     @Override
-    public Uni<ProjectResource> updateProject(Long projectId, String name) {
+    public Uni<ProjectResource> updateProject(Long projectId, String name, String description) {
         return projectRepository.findById(projectId)
                 .onItem().ifNull().failWith(NotFoundException::new)
-                .onItem().call(project -> {
+                .onItem().invoke(project -> {
                     if (name != null) {
                         project.setName(name);
                     }
-                    return projectRepository.persist(project);
+                    if (description != null) {
+                        project.setDescription(description);
+                    }
                 })
                 .onItem().transform(projectMapper::map);
     }
