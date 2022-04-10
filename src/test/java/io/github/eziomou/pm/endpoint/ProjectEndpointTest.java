@@ -3,7 +3,6 @@ package io.github.eziomou.pm.endpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.vertx.core.json.JsonObject;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -62,7 +61,8 @@ public class ProjectEndpointTest {
                 .statusCode(200)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body("id", is(1))
-                .body("name", is("Project 1"));
+                .body("name", is("Project 1"))
+                .body("createdAt", matchesRegex("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"));
     }
 
     @Test

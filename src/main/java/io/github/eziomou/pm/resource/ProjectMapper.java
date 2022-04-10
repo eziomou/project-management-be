@@ -12,6 +12,7 @@ public class ProjectMapper implements Mapper<ProjectEntity, ProjectResource> {
         ProjectResource resource = new ProjectResource();
         resource.setId(entity.getId());
         resource.setName(entity.getName());
+        resource.setCreatedAt(entity.getCreatedAt());
         return resource;
     }
 }

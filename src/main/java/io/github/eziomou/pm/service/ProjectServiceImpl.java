@@ -12,6 +12,7 @@ import io.smallrye.mutiny.Uni;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.time.LocalDateTime;
 
 @ApplicationScoped
 public class ProjectServiceImpl implements ProjectService {
@@ -28,6 +29,7 @@ public class ProjectServiceImpl implements ProjectService {
         return Uni.createFrom().item(() -> {
                     ProjectEntity project = new ProjectEntity();
                     project.setName(name);
+                    project.setCreatedAt(LocalDateTime.now());
                     return project;
                 })
                 .onItem().transformToUni(project -> projectRepository.persist(project))
