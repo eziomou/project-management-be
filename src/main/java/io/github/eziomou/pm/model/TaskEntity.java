@@ -2,15 +2,14 @@ package io.github.eziomou.pm.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "project")
-public class ProjectEntity extends BaseEntity<Long> {
+@Table(name = "task")
+public class TaskEntity extends BaseEntity<Long> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_id_gen")
-    @SequenceGenerator(name = "project_id_gen", sequenceName = "project_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_id_gen")
+    @SequenceGenerator(name = "task_id_gen", sequenceName = "task_id_seq", allocationSize = 1)
     @Column(name = "ID")
     private Long id;
 
@@ -23,8 +22,8 @@ public class ProjectEntity extends BaseEntity<Long> {
     @Column(name = "CREATED_AT", nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<TaskEntity> tasks;
+    @ManyToOne
+    private ProjectEntity project;
 
     @Override
     public Long getId() {
@@ -59,11 +58,11 @@ public class ProjectEntity extends BaseEntity<Long> {
         this.createdAt = createdAt;
     }
 
-    public List<TaskEntity> getTasks() {
-        return tasks;
+    public ProjectEntity getProject() {
+        return project;
     }
 
-    public void setTasks(List<TaskEntity> tasks) {
-        this.tasks = tasks;
+    public void setProject(ProjectEntity project) {
+        this.project = project;
     }
 }
