@@ -1,6 +1,9 @@
 package io.github.eziomou.pm.endpoint;
 
+import io.github.eziomou.pm.security.Role;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.oidc.server.OidcWiremockTestResource;
 import io.restassured.http.ContentType;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -13,11 +16,13 @@ import static org.hamcrest.Matchers.matchesRegex;
 import static org.hamcrest.Matchers.notNullValue;
 
 @QuarkusTest
-public class ProjectEndpointTest {
+@QuarkusTestResource(OidcWiremockTestResource.class)
+public class ProjectEndpointTest extends BaseEndpointTest {
 
     @Test
     public void createProject_validProject() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .contentType(ContentType.JSON)
                 .body(new JsonObject()
                         .put("name", "Project name")
@@ -32,6 +37,7 @@ public class ProjectEndpointTest {
     @Test
     public void createProject_blankName() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .contentType(ContentType.JSON)
                 .body(new JsonObject().put("name", " ").toString())
                 .when().post("/projects")
@@ -42,6 +48,7 @@ public class ProjectEndpointTest {
     @Test
     public void createProject_nullDescription() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .contentType(ContentType.JSON)
                 .body(new JsonObject()
                         .put("name", "Project name")
@@ -97,6 +104,7 @@ public class ProjectEndpointTest {
     @Test
     public void updateProject() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 20)
                 .contentType(ContentType.JSON)
                 .body(new JsonObject()
@@ -120,6 +128,7 @@ public class ProjectEndpointTest {
     @Test
     public void updateProject_notExisting() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 100)
                 .contentType(ContentType.JSON)
                 .body(new JsonObject().put("name", "Updated project name").toString())
@@ -131,12 +140,14 @@ public class ProjectEndpointTest {
     @Test
     public void deleteProject() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 40)
                 .when().delete("/projects/{projectId}")
                 .then()
                 .statusCode(204);
 
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 40)
                 .when().get("/projects/{projectId}")
                 .then()
@@ -146,6 +157,7 @@ public class ProjectEndpointTest {
     @Test
     public void deleteProject_notExisting() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 100)
                 .when().delete("/projects/{projectId}")
                 .then()

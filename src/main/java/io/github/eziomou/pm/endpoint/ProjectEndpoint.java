@@ -2,10 +2,12 @@ package io.github.eziomou.pm.endpoint;
 
 import io.github.eziomou.pm.resource.PageResource;
 import io.github.eziomou.pm.resource.ProjectResource;
+import io.github.eziomou.pm.security.Role;
 import io.github.eziomou.pm.service.ProjectService;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestResponse;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -20,6 +22,7 @@ public class ProjectEndpoint {
     @Inject
     ProjectService projectService;
 
+    @RolesAllowed(Role.USER)
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Uni<?> createProject(@NotNull @Valid CreateProjectRequest request, @Context UriInfo uriInfo) {
@@ -40,6 +43,7 @@ public class ProjectEndpoint {
         return projectService.getProject(projectId).map(RestResponse::ok);
     }
 
+    @RolesAllowed(Role.USER)
     @PATCH
     @Path("/{projectId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -47,6 +51,7 @@ public class ProjectEndpoint {
         return projectService.updateProject(projectId, request.getName(), request.getDescription());
     }
 
+    @RolesAllowed(Role.USER)
     @DELETE
     @Path("/{projectId}")
     public Uni<?> deleteProject(@PathParam("projectId") Long projectId) {

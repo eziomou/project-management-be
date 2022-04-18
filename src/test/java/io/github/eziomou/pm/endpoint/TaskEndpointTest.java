@@ -1,6 +1,9 @@
 package io.github.eziomou.pm.endpoint;
 
+import io.github.eziomou.pm.security.Role;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.oidc.server.OidcWiremockTestResource;
 import io.restassured.http.ContentType;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -13,11 +16,13 @@ import static org.hamcrest.Matchers.matchesRegex;
 import static org.hamcrest.Matchers.notNullValue;
 
 @QuarkusTest
-public class TaskEndpointTest {
+@QuarkusTestResource(OidcWiremockTestResource.class)
+public class TaskEndpointTest extends BaseEndpointTest {
 
     @Test
     public void createTask_validTask() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .contentType(ContentType.JSON)
                 .body(new JsonObject()
@@ -33,6 +38,7 @@ public class TaskEndpointTest {
     @Test
     public void createTask_blankName() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .contentType(ContentType.JSON)
                 .body(new JsonObject().put("name", " ").toString())
@@ -44,6 +50,7 @@ public class TaskEndpointTest {
     @Test
     public void createTask_nullDescription() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .contentType(ContentType.JSON)
                 .body(new JsonObject()
@@ -97,6 +104,7 @@ public class TaskEndpointTest {
     @Test
     public void updateTask() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .pathParam("taskId", 2)
                 .contentType(ContentType.JSON)
@@ -109,6 +117,7 @@ public class TaskEndpointTest {
                 .statusCode(200);
 
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .pathParam("taskId", 2)
                 .when().get("/projects/{projectId}/tasks/{taskId}")
@@ -121,6 +130,7 @@ public class TaskEndpointTest {
     @Test
     public void updateTask_notExisting() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .pathParam("taskId", 100)
                 .contentType(ContentType.JSON)
@@ -133,6 +143,7 @@ public class TaskEndpointTest {
     @Test
     public void deleteTask() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .pathParam("taskId", 3)
                 .when().delete("/projects/{projectId}/tasks/{taskId}")
@@ -140,6 +151,7 @@ public class TaskEndpointTest {
                 .statusCode(204);
 
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .pathParam("taskId", 3)
                 .when().get("/projects/{projectId}/tasks/{taskId}")
@@ -150,6 +162,7 @@ public class TaskEndpointTest {
     @Test
     public void deleteTask_notExisting() {
         given()
+                .auth().oauth2(getAccessToken("alice", Role.USER))
                 .pathParam("projectId", 1)
                 .pathParam("taskId", 100)
                 .when().delete("/projects/{projectId}/tasks/{taskId}")

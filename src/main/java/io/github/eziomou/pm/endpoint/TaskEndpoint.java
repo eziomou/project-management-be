@@ -2,10 +2,12 @@ package io.github.eziomou.pm.endpoint;
 
 import io.github.eziomou.pm.resource.PageResource;
 import io.github.eziomou.pm.resource.TaskResource;
+import io.github.eziomou.pm.security.Role;
 import io.github.eziomou.pm.service.TaskService;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestResponse;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -20,6 +22,7 @@ public class TaskEndpoint {
     @Inject
     TaskService taskService;
 
+    @RolesAllowed(Role.USER)
     @POST
     @Path("/{projectId}/tasks")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -44,6 +47,7 @@ public class TaskEndpoint {
         return taskService.getTask(projectId, taskId).map(RestResponse::ok);
     }
 
+    @RolesAllowed(Role.USER)
     @PATCH
     @Path("/{projectId}/tasks/{taskId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -52,6 +56,7 @@ public class TaskEndpoint {
         return taskService.updateTask(projectId, taskId, request.getName(), request.getDescription());
     }
 
+    @RolesAllowed(Role.USER)
     @DELETE
     @Path("/{projectId}/tasks/{taskId}")
     public Uni<?> deleteTask(@PathParam("projectId") Long projectId, @PathParam("taskId") Long taskId) {
