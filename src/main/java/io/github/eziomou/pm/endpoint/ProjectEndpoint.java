@@ -26,7 +26,7 @@ public class ProjectEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Uni<?> createProject(@NotNull @Valid CreateProjectRequest request, @Context UriInfo uriInfo) {
-        return projectService.createProject(request.getName())
+        return projectService.createProject(request.getName(), request.getDescription())
                 .map(project -> RestResponse.created(uriInfo.getAbsolutePathBuilder().path(project.getId().toString()).build()));
     }
 

@@ -25,11 +25,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @ReactiveTransactional
     @Override
-    public Uni<ProjectResource> createProject(String name) {
+    public Uni<ProjectResource> createProject(String name, String description) {
         return Uni.createFrom().item(() -> {
                     ProjectEntity project = new ProjectEntity();
                     project.setName(name);
-                    project.setDescription(name);
+                    project.setDescription(description);
                     project.setCreatedAt(LocalDateTime.now());
                     return project;
                 })
