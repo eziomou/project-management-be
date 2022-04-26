@@ -53,7 +53,7 @@ public class TaskServiceImpl implements TaskService {
                 .unis(taskRepository.find("project.id", projectId).page(Page.of(pageIndex, pageSize)).stream()
                                 .onItem().transform(taskMapper::map)
                                 .collect().asList(),
-                        taskRepository.findAll().count())
+                        taskRepository.find("project.id", projectId).count())
                 .asTuple()
                 .map(tuple -> new PageResource<>(tuple.getItem1(), new PageResource.Metadata(tuple.getItem2())));
     }
